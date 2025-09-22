@@ -23,7 +23,8 @@ public class BaseInitData {
     @Bean
     ApplicationRunner initDatRunner(){
         return args -> {
-            self.work1();
+            self.work1(); // 프록시 객체를 통해서 가리킴
+            self.work2(); // 자기 자신 직접 가리킴
         };
     }
 
@@ -40,6 +41,15 @@ public class BaseInitData {
         Member member4 = memberService.join("user2", "시스템");
         Member member5 = memberService.join("user3", "시스템");
 
+    }
+
+    @Transactional // 트랜잭션을 사용하려면 반드시 프록시 객체 (self)를 이용해야함
+    void work2() {
+        Member member4 = memberService.findByUsername("user2").get();
+
+        member4.setNickname("new user2");
+
+        System.out.println(member4.getNickname());
     }
 
 
