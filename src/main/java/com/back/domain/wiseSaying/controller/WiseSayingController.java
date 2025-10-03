@@ -22,8 +22,8 @@ public class WiseSayingController {
 
 
     private final WiseSayingService wiseSayingService;
-
-
+    private final Parser parser;
+    private final HtmlRenderer renderer;
 
 
 
@@ -75,10 +75,8 @@ public class WiseSayingController {
 
         WiseSaying wiseSaying = wiseSayingService.findById(id).get();
 
-        //파서 & 랜더러 준비
-        Parser parser = Parser.builder().build();
+        //파서 & 랜더러 준비 -> Bean에 등록하여 사용하자
         Node document = parser.parse(wiseSaying.getContent());
-        HtmlRenderer renderer = HtmlRenderer.builder().build();
 
         //HTML 변환
         String html = renderer.render(document);
