@@ -1,6 +1,7 @@
 package com.back.domain.wiseSaying.service;
 
 import com.back.domain.wiseSaying.entity.WiseSaying;
+import com.back.domain.wiseSaying.repository.WiseSayingMemRepository;
 import com.back.domain.wiseSaying.repository.WiseSayingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,14 +29,14 @@ public class WiseSayingService {
 
 
     public void delete(WiseSaying wiseSaying) {
-        wiseSayingRepository.remove(wiseSaying);
+        wiseSayingRepository.delete(wiseSaying);
     }
 
     public void modify(WiseSaying wiseSaying, String content, String author) {
         wiseSaying.update(content, author);
     }
 
-    public Optional<WiseSaying> findById(int id){
+    public Optional<WiseSaying> findById(Long id){
         Optional<WiseSaying> wiseSaying = wiseSayingRepository.findById(id);
         if(wiseSaying.isEmpty()){
             throw new RuntimeException("%d 번 명언은 존재하지 않습니다.".formatted(id));

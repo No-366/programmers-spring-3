@@ -64,7 +64,7 @@ public class WiseSayingController {
     @ResponseBody
     public String detail(
             @PathVariable
-            int id
+            Long id
     ){
         WiseSaying wiseSaying = wiseSayingService.findById(id).get();
 
@@ -89,7 +89,7 @@ public class WiseSayingController {
     @GetMapping("/wiseSayings/delete/{id}")
     @ResponseBody
     public String delete(
-            @PathVariable int id
+            @PathVariable Long id
     ){
         WiseSaying wiseSaying = wiseSayingService.findById(id).get();
 
@@ -104,7 +104,7 @@ public class WiseSayingController {
     @GetMapping("/wiseSayings/modify/{id}")
     @ResponseBody
     public String modify(
-            @PathVariable int id,
+            @PathVariable Long id,
             @RequestParam(defaultValue = "기본값") String content,
             @RequestParam(defaultValue = "기본값") String author
     ){
