@@ -4,6 +4,9 @@ package com.back.domain.wiseSaying.controller;
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.service.WiseSayingService;
 import lombok.RequiredArgsConstructor;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,9 @@ public class WiseSayingController {
 
 
     private final WiseSayingService wiseSayingService;
+
+
+
 
 
     // [ Create ]
@@ -59,20 +65,29 @@ public class WiseSayingController {
 
     }
 
-    // 상세 보기
+    // 상세 보기 // 이번 실습에서는 common-markdown 라이브러리 사용
     @GetMapping("/wiseSayings/{id}")
     @ResponseBody
     public String detail(
             @PathVariable
             Long id
     ){
+
         WiseSaying wiseSaying = wiseSayingService.findById(id).get();
+
+        //파서 & 랜더러 준비
+        Parser parser = Parser.builder().build();
+        Node document = parser.parse(wiseSaying.getContent());
+        HtmlRenderer renderer = HtmlRenderer.builder().build();
+
+        //HTML 변환
+        String html = renderer.render(document);
 
         return """
                 <h1>번호 : %s</h1>
-                <div>명언 : %s</div>
                 <div>작가 : %s</div>
-                """.formatted(wiseSaying.getId(), wiseSaying.getContent(), wiseSaying.getAuthor());
+                <div>명언 : %s</div>
+                """.formatted(wiseSaying.getId(), wiseSaying.getAuthor(), html);
 
     }
 
