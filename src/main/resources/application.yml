@@ -5,12 +5,6 @@ spring:
   profiles:
     active: dev # 기본적으로 application-dev.yml을 보도록
 
-  datasource:
-    url: jdbc:h2:./db_dev;MODE=MySQL # DB 위치
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
   jpa:
     properties: # -> 콘솔에 hibernate의 sql 로그를 좀 더 가독성 좋게 보여줌
       hibernate:
