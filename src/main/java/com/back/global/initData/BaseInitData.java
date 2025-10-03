@@ -1,7 +1,9 @@
 package com.back.global.initData;
 
 import com.back.domain.member.entity.Member;
+import com.back.domain.member.repository.MemberRepository;
 import com.back.domain.member.service.MemberService;
+import com.back.domain.wiseSaying.service.WiseSayingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -20,11 +22,14 @@ public class BaseInitData {
 
     private final MemberService memberService;
 
+    private final WiseSayingService wiseSayingService;
+
     @Bean
     ApplicationRunner initDatRunner(){
         return args -> {
             self.work1(); // 프록시 객체를 통해서 가리킴
             self.work2(); // 자기 자신 직접 가리킴
+            work3();
         };
     }
 
@@ -52,5 +57,17 @@ public class BaseInitData {
         System.out.println(member4.getNickname());
     }
 
+    private void work3() {
+
+        if(wiseSayingService.count() > 0){
+            return;
+        }
+
+        wiseSayingService.write("명언1", "작가1");
+        wiseSayingService.write("명언2", "작가2");
+        wiseSayingService.write("명언3", "작가3");
+        wiseSayingService.write("명언4", "작가4");
+        wiseSayingService.write("명언5", "작가5");
+    }
 
 }

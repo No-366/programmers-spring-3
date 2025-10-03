@@ -11,4 +11,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //반드시 Member 엔티티 안에 username 필드가 존재해야한다.
     //매개변수로 엔티티 하나를 조회할 수 있음
     Optional<Member> findByUsername(String username);
+
+    //void write(String 명언1, String 작가1);
 }

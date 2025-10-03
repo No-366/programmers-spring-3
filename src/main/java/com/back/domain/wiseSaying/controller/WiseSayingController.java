@@ -2,33 +2,26 @@ package com.back.domain.wiseSaying.controller;
 
 
 import com.back.domain.wiseSaying.entity.WiseSaying;
+import com.back.domain.wiseSaying.service.WiseSayingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 @ResponseBody
+@RequiredArgsConstructor
 public class WiseSayingController {
 
-    private List<WiseSaying> wiseSayingList = new ArrayList<>(){
-        {
-            add(new WiseSaying(1,"명언1", "작가1"));
-            add(new WiseSaying(2,"명언2", "작가2"));
-            add(new WiseSaying(3,"명언3", "작가3"));
-            add(new WiseSaying(4,"명언4", "작가4"));
-            add(new WiseSaying(5,"명언5", "작가5"));
-        }
-    };
-    private int lastId = 5; //
 
-// [ Create ]
+    private final WiseSayingService wiseSayingService;
+
+
+    // [ Create ]
     @GetMapping("/wiseSaying/write")
     public String write(
             String content,
@@ -42,9 +35,7 @@ public class WiseSayingController {
             throw new RuntimeException("작가를 입력해주세요.");
         }
 
-
-        WiseSaying wiseSaying = new WiseSaying(++lastId, content, author);
-        wiseSayingList.add(wiseSaying);
+        WiseSaying wiseSaying = wiseSayingService.write(content, author);
 
         return " %d번 명언이 등록되었습니다 ".formatted(wiseSaying.getId());
     }
@@ -55,7 +46,7 @@ public class WiseSayingController {
     @ResponseBody
     public String list(){
 
-        String wiseSayings = wiseSayingList.stream()
+        String wiseSayings = wiseSayingService.findAll().stream()
                 .map(w -> "<li>%s / %s / %s</li>".formatted(w.getId(), w.getContent(), w.getAuthor()))
                 .collect(Collectors.joining("\n"));
 
@@ -75,7 +66,7 @@ public class WiseSayingController {
             @PathVariable
             int id
     ){
-        WiseSaying wiseSaying = findById(id);
+        WiseSaying wiseSaying = wiseSayingService.findById(id).get();
 
         return """
                 <h1>번호 : %s</h1>
@@ -100,9 +91,10 @@ public class WiseSayingController {
     public String delete(
             @PathVariable int id
     ){
-        WiseSaying wiseSaying = findById(id);
+        WiseSaying wiseSaying = wiseSayingService.findById(id).get();
 
-        wiseSayingList.remove(wiseSaying);
+        //wiseSayingList.remove(wiseSaying);
+        wiseSayingService.delete(wiseSaying);
 
         return "%d 번 명언이 삭제되었습니다.".formatted(id);
     }
@@ -116,22 +108,12 @@ public class WiseSayingController {
             @RequestParam(defaultValue = "기본값") String content,
             @RequestParam(defaultValue = "기본값") String author
     ){
-      WiseSaying wiseSaying = findById(id);
-      wiseSaying.setContent(content);
-      wiseSaying.setAuthor(author);
+      WiseSaying wiseSaying = wiseSayingService.findById(id).get();
+      wiseSayingService.modify(wiseSaying, content, author);
 
         return "%d 번 명언이 수정되었습니다".formatted(wiseSaying.getId());
     }
 
-    private WiseSaying findById(int id){
-        Optional<WiseSaying> wiseSaying = wiseSayingList.stream()
-                .filter(w -> w.getId() == id)
-                .findFirst();
 
-        if(wiseSaying.isEmpty()){
-            throw new RuntimeException("%d 번 명언은 존재하지 않습니다.".formatted(id));
-        }
-        return wiseSaying.get();
-    }
 
 }
