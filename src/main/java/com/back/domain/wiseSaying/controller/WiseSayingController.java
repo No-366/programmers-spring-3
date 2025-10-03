@@ -3,6 +3,7 @@ package com.back.domain.wiseSaying.controller;
 
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.service.WiseSayingService;
+import com.back.standard.MarkdownService;
 import lombok.RequiredArgsConstructor;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -22,9 +23,7 @@ public class WiseSayingController {
 
 
     private final WiseSayingService wiseSayingService;
-    private final Parser parser;
-    private final HtmlRenderer renderer;
-
+    private final MarkdownService markdownService;
 
 
     // [ Create ]
@@ -75,11 +74,7 @@ public class WiseSayingController {
 
         WiseSaying wiseSaying = wiseSayingService.findById(id).get();
 
-        //파서 & 랜더러 준비 -> Bean에 등록하여 사용하자
-        Node document = parser.parse(wiseSaying.getContent());
-
-        //HTML 변환
-        String html = renderer.render(document);
+        String html = markdownService.toHtml(wiseSaying.toString());
 
         return """
                 <h1>번호 : %s</h1>
